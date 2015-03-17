@@ -564,21 +564,39 @@ void Warehouse::PrintAmountDueByMonthReport(Date aDate)
 void Warehouse::PrintRebateReport()
 {
 	Basic *memberPtr;
-	Date datePtr;
+		Item *itemPtr;
+		float rebate;
 
-	cout << "=====================================" << endl << "	Rebate Report"
-			<< endl << "=====================================" << endl;
-	memberPtr = members.GetHead();
-	while (memberPtr != NULL)
-	{
-		if (memberPtr->GetMemberType() == PREFERRED)
+		cout << fixed << setprecision(2);
+		cout << "=====================================" << endl <<
+				"	Rebate Report" << endl <<
+				"=====================================" << endl;
+
+		memberPtr = members.GetHead();
+		itemPtr = inventory.GetHead();
+		rebate = 0.0;
+
+		while(memberPtr != NULL)
 		{
-			cout << "ID:   " << memberPtr->GetId() << "	REBATE:" << endl;
-			cout << "";
+
+			if(memberPtr->GetMemberType() == PREFERRED)
+			{
+				cout << "ID:   " << memberPtr->GetId();
+				while(itemPtr != NULL)
+				{
+					if(memberPtr->GetId() ==  itemPtr->GetBuyerID())
+					{
+						rebate += (float(itemPtr->GetQuantity()) * (itemPtr->GetPrice()));
+					}
+					itemPtr = itemPtr->GetNextItem();
+				}
+				rebate *= .06;
+				cout << "	REBATE: " << rebate << endl;
+				memberPtr = memberPtr->GetNext();
+			}
+
 		}
-		memberPtr = memberPtr->GetNext();
-	}
-	cout << endl;
+		cout << endl;
 }
 
 void Warehouse::PrintItemsSold()
